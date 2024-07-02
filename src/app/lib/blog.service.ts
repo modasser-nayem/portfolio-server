@@ -1,7 +1,9 @@
+import { QueryOptions } from "mongoose";
 import AppError from "../error/AppError";
 import { TBlog } from "../interface/blog.interface";
 import Blog from "../models/blog.model";
 import { uploadImageToCloudinary } from "../utils/fileUpload";
+import { isNumeric } from "../utils/global";
 
 const createBlogIntoDB = async (file: any, data: TBlog) => {
   if (await Blog.findOne({ title: data.title })) {
@@ -16,7 +18,7 @@ const createBlogIntoDB = async (file: any, data: TBlog) => {
   if (!data.thumbnail && file) {
     const cloudinaryResponse = await uploadImageToCloudinary(
       file.filename,
-      file.path
+      file.path,
     );
     if (!cloudinaryResponse?.secure_url) {
       throw new AppError(400, "Failed to update image, please try again.");
@@ -32,7 +34,7 @@ const createBlogIntoDB = async (file: any, data: TBlog) => {
 const updateBlogIntoDB = async (
   id: string,
   file: any,
-  data: Partial<TBlog>
+  data: Partial<TBlog>,
 ) => {
   if (!(await Blog.findById(id))) {
     throw new AppError(404, "Blog not found!");
@@ -42,7 +44,7 @@ const updateBlogIntoDB = async (
   if (!data.thumbnail && file) {
     const cloudinaryResponse = await uploadImageToCloudinary(
       file.filename,
-      file.path
+      file.path,
     );
     if (!cloudinaryResponse?.secure_url) {
       throw new AppError(400, "Failed to update image, please try again.");
@@ -57,17 +59,33 @@ const updateBlogIntoDB = async (
   return result;
 };
 
-const getAllBlogFromDB = async (query?: { status?: "draft" | "publish" }) => {
+const getAllBlogFromDB = async (payload: { query?: Record<string, any> }) => {
+  const query = payload?.query;
+
   const filter = query?.status ? { status: query.status } : {};
 
-  const result = await Blog.find(filter, {
-    _id: 1,
-    title: 1,
-    thumbnail: 1,
-    category: 1,
-    status: 1,
-    createdAt: 1,
-  });
+  const queryOptions: QueryOptions = {
+    sort: {
+      createdAt: "desc",
+    },
+  };
+
+  if (query?.limit && isNumeric(query.limit)) {
+    queryOptions.limit = Number(query.limit);
+  }
+
+  const result = await Blog.find(
+    filter,
+    {
+      _id: 1,
+      title: 1,
+      thumbnail: 1,
+      category: 1,
+      status: 1,
+      createdAt: 1,
+    },
+    queryOptions,
+  );
 
   return result;
 };

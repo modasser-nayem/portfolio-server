@@ -3,11 +3,9 @@ import catchAsyncHandler from "../utils/catchAsyncHandler";
 import sendResponse from "../utils/sendResponse";
 
 const getSkills = catchAsyncHandler(async (req, res) => {
-  const stack = req.query?.stack;
+  const query = req.query;
 
-  const result = await skillServices.getSkillsFormDB(
-    stack as string | undefined
-  );
+  const result = await skillServices.getSkillsFormDB({ query });
 
   sendResponse(res, {
     statusCode: 200,

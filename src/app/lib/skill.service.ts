@@ -3,8 +3,10 @@ import { TSkill } from "../interface/skill.interface";
 import Skill from "../models/skills.model";
 
 // get all skill
-const getSkillsFormDB = async (stack?: string) => {
-  const filter = stack ? { stack: new RegExp(stack, "i") } : {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getSkillsFormDB = async (payload: { query?: Record<string, any> }) => {
+  const query = payload?.query;
+  const filter = query?.stack ? { stack: new RegExp(query.stack, "i") } : {};
 
   const result = await Skill.find(filter);
 

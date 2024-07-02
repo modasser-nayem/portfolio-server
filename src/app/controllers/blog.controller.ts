@@ -17,7 +17,7 @@ const updateBlog = catchAsyncHandler(async (req, res) => {
   const result = await blogServices.updateBlogIntoDB(
     req.params.id,
     req.file,
-    req.body
+    req.body,
   );
 
   sendResponse(res, {
@@ -31,7 +31,7 @@ const updateBlog = catchAsyncHandler(async (req, res) => {
 const getAllBlog = catchAsyncHandler(async (req, res) => {
   const query = req.query;
 
-  const result = await blogServices.getAllBlogFromDB(query);
+  const result = await blogServices.getAllBlogFromDB({ query });
 
   sendResponse(res, {
     statusCode: 200,

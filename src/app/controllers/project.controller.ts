@@ -3,7 +3,9 @@ import catchAsyncHandler from "../utils/catchAsyncHandler";
 import sendResponse from "../utils/sendResponse";
 
 const getAllProject = catchAsyncHandler(async (req, res) => {
-  const result = await projectServices.getAllProjectFromDB();
+  const result = await projectServices.getAllProjectFromDB({
+    query: req.query,
+  });
 
   sendResponse(res, {
     statusCode: 200,
@@ -39,7 +41,7 @@ const updateProject = catchAsyncHandler(async (req, res) => {
   const result = await projectServices.updateProjectIntoDB(
     req.params.id,
     req.file,
-    req.body
+    req.body,
   );
 
   sendResponse(res, {
