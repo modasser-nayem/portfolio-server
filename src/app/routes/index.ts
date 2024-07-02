@@ -4,10 +4,15 @@ import skillRouter from "./skill.routes";
 import serviceRouter from "./service.routes";
 import projectRouter from "./project.routes";
 import blogRouter from "./blog.routes";
+import { authRoute } from "../auth/auth";
 
 const router = Router();
 
 const allRoutes = [
+  {
+    path: "/auth",
+    routes: authRoute,
+  },
   {
     path: "/",
     routes: informationRoutes,

@@ -4,6 +4,7 @@ import validateRequest from "../middlewares/validateRequest";
 import informationValidationSchemas from "../validations/Information.validation";
 import { upload } from "../utils/fileUpload";
 import deleteExistingFile from "../middlewares/deleteExistingFile";
+import auth from "../middlewares/auth";
 
 const router = Router();
 
@@ -13,6 +14,7 @@ router.get("/information", informationControllers.getInformation);
 // introduction update
 router.put(
   "/introduction",
+  auth(),
   deleteExistingFile,
   upload.single("introduction"),
   (req, res, next) => {
@@ -30,6 +32,7 @@ router.put(
   "/about",
   deleteExistingFile,
   upload.single("about"),
+  auth(),
   (req, res, next) => {
     req.body = JSON.parse(req.body.data);
     next();
@@ -41,6 +44,7 @@ router.put(
 // contact info update
 router.put(
   "/contact-info",
+  auth(),
   validateRequest(
     informationValidationSchemas.updateContactInfoValidationSchema,
   ),
@@ -50,6 +54,7 @@ router.put(
 // sort description update
 router.put(
   "/sort-descriptions",
+  auth(),
   validateRequest(
     informationValidationSchemas.updateSortDescriptionValidationSchema,
   ),

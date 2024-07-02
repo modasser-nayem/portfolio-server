@@ -4,6 +4,7 @@ import projectSchemaValidations from "../validations/project.validation";
 import projectControllers from "../controllers/project.controller";
 import { upload } from "../utils/fileUpload";
 import deleteExistingFile from "../middlewares/deleteExistingFile";
+import auth from "../middlewares/auth";
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.get("/:id", projectControllers.getSingleProject);
 // create new project
 router.post(
   "/",
+  auth(),
   deleteExistingFile,
   upload.single("image"),
   (req, res, next) => {
@@ -23,12 +25,13 @@ router.post(
     next();
   },
   validateRequest(projectSchemaValidations.createProjectSchemaValidation),
-  projectControllers.createProject
+  projectControllers.createProject,
 );
 
 // update project
 router.put(
   "/:id",
+  auth(),
   deleteExistingFile,
   upload.single("image"),
   (req, res, next) => {
@@ -36,11 +39,11 @@ router.put(
     next();
   },
   validateRequest(projectSchemaValidations.updateProjectSchemaValidation),
-  projectControllers.updateProject
+  projectControllers.updateProject,
 );
 
 // delete project
-router.delete("/:id", projectControllers.deleteProject);
+router.delete("/:id", auth(), projectControllers.deleteProject);
 
 const projectRouter = router;
 export default projectRouter;
